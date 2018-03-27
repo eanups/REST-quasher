@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=quartz
+    # url: jdbc:postgresql://btc5x324.code1.emi.philips.com:5432/harbinger?currentSchema=quartz
+    username: postgres
+    password: postgres
+  jpa:
+      hibernate:
+        ddlAuto: none
+server:
+  port: 8082
+
+
+
