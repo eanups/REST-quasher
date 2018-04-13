@@ -2,6 +2,7 @@ package org.venom.scheduler.quartz.trigger;
 
 import org.quartz.*;
 import org.springframework.context.ApplicationContext;
+import org.venom.scheduler.quartz.job.EmailJob;
 import org.venom.scheduler.quartz.job.JobFactory;
 import org.venom.scheduler.quartz.job.ReportJob;
 import org.venom.scheduler.report.entity.CronSchedule;
@@ -9,7 +10,6 @@ import org.venom.scheduler.report.entity.CronSchedule;
 import java.util.TimeZone;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 import static org.quartz.TriggerKey.triggerKey;
 
@@ -17,27 +17,28 @@ public class CRUDTrigger {
 
     private Scheduler scheduler;
 
-    private static final String GROUP = "report";
+    static final String GROUP = "report";
 
     public CRUDTrigger(ApplicationContext context) {
         scheduler = (Scheduler) context.getBean("schedulerFactoryBean");
     }
 
-    public String addEmailTrigger(String name, int minutes, int repeatCount) {
+    public String addEmailTrigger(String name, int time, int repeatCount) {
 
         String message = "Email Scheduled job for : " + name;
 
         JobDetail emailJob = JobFactory.getJobInstance(name+"_email");
 
-        Trigger trigger = newTrigger()
-                .withIdentity(name, GROUP)
-                .startNow()
-                .withSchedule(simpleSchedule()
-                        .withIntervalInMinutes(minutes)
-                        .withRepeatCount(repeatCount))
-                .build();
+        Trigger trigger;
+        if (name.toLowerCase().contains("min")) {
+             trigger = CustomTriggerFactory.getMinutesTrigger(name, time, repeatCount);
 
-        emailJob.getJobDataMap().put(ReportJob.NAME, name);
+        } else  {
+            trigger = CustomTriggerFactory.getSecondsTrigger(name, time, repeatCount);
+
+        }
+
+        emailJob.getJobDataMap().put(EmailJob.NAME, name);
 
         try {
             scheduler.scheduleJob(emailJob, trigger);

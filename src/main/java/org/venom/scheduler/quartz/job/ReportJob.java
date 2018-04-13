@@ -2,15 +2,14 @@ package org.venom.scheduler.quartz.job;
 
 import org.quartz.Job;
 import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
+
 import org.quartz.JobExecutionContext;
 
-import javax.print.attribute.standard.MediaSize;
+
 import java.util.Date;
 
-public class ReportJob implements Job {
+public class ReportJob implements Job, JobConstants {
 
-    public static final String NAME = "name";
 
     @Override
     public void execute(JobExecutionContext context) {
